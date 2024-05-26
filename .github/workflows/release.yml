@@ -1,6 +1,9 @@
 # .github/workflows/release.yaml
 
 on:
+  push :
+    branches:
+      - trunk
   release:
     types: [created]
 
@@ -13,17 +16,12 @@ jobs:
     name: release linux/amd64
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up MinGW-w64
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64
       - uses: wangyoucao577/go-release-action@v1
         env:
           CC: x86_64-w64-mingw32-gcc
           CGO_ENABLED: 1
         with:
-          pre_command: sudo apt-get install -y gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64
+          pre_command: apt-get install -y gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: windows
           goarch: amd64
