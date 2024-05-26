@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/sirupsen/logrus"
 	"sync"
 	"time"
 )
@@ -11,9 +12,12 @@ var (
 )
 
 func main() {
+	logrus.Info("Starting Automover")
 	if err := loadConfig(); err != nil {
 		panic(err)
 	}
+
+	go startWatcher()
 
 	go runSystray()
 
