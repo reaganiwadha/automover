@@ -1,6 +1,6 @@
 module automover
 
-go 1.22
+go 1.21
 
 require (
 	github.com/AllenDang/giu v0.7.0
