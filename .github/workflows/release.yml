@@ -19,3 +19,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: windows
           goarch: amd64
+          env:
+            CGO_ENABLED: 1
