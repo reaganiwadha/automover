@@ -15,7 +15,7 @@ func onExit() {
 func onReady() {
 	systray.SetIcon(icon.Data)
 	systray.SetTitle("Awesome App")
-	systray.SetTooltip("Pretty awesome 超级棒")
+	systray.SetTooltip("Pretty awesome 超级棒\nRight-click for more awesome!")
 	systray.SetOnClick(func(menu systray.IMenu) {
 		mu.Lock()
 		defer mu.Unlock()

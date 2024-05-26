@@ -76,6 +76,11 @@ func startWatcher() {
 func handleEvent(event fsnotify.Event) {
 	logrus.Info("Event: ", event)
 	logrus.Info("Modified file: ", event.Name)
+
+	if event.Has(fsnotify.Remove) {
+		return
+	}
+
 	for _, watch := range config.Watchlist {
 		filename := filepath.Base(event.Name)
 
@@ -85,7 +90,7 @@ func handleEvent(event fsnotify.Event) {
 			continue
 		}
 		if matched {
-			debounceEvent(event.Name, func() {
+			debounceEvent(event.Name, 5*time.Second, func() {
 				logrus.Info("Moving file: ", event.Name, " to ", watch.DestinationPath)
 				if moveErr := os.Rename(event.Name, path.Join(watch.DestinationPath, filepath.Base(event.Name))); moveErr != nil {
 					logrus.Error("Error moving file: ", moveErr)
@@ -95,15 +100,20 @@ func handleEvent(event fsnotify.Event) {
 	}
 }
 
-func debounceEvent(filePath string, action func()) {
+func debounceEvent(filePath string, delay time.Duration, action func()) {
 	debounceMutex.Lock()
 	defer debounceMutex.Unlock()
 
-	timer, found := debounceMap[filePath]
-	if found {
+	if timer, found := debounceMap[filePath]; found {
 		timer.Stop()
 	}
 
-	timer = time.AfterFunc(time.Second, action)
+	timer := time.AfterFunc(delay, func() {
+		debounceMutex.Lock()
+		delete(debounceMap, filePath)
+		debounceMutex.Unlock()
+		action()
+	})
+
 	debounceMap[filePath] = timer
 }
