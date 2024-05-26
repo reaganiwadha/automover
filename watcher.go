@@ -16,6 +16,9 @@ var (
 	watcher        *fsnotify.Watcher
 	debounceMap    = make(map[string]*time.Timer)
 	debounceMutex  sync.Mutex
+
+	lastMoved string
+	counter   int
 )
 
 func stopWatcher() {
@@ -90,11 +93,16 @@ func handleEvent(event fsnotify.Event) {
 			continue
 		}
 		if matched {
-			debounceEvent(event.Name, 5*time.Second, func() {
+			debounceEvent(event.Name, 2*time.Second, func() {
 				logrus.Info("Moving file: ", event.Name, " to ", watch.DestinationPath)
 				if moveErr := os.Rename(event.Name, path.Join(watch.DestinationPath, filepath.Base(event.Name))); moveErr != nil {
 					logrus.Error("Error moving file: ", moveErr)
+					return
 				}
+
+				lastMoved = event.Name
+				counter++
+				updateSystray()
 			})
 		}
 	}

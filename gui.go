@@ -4,6 +4,7 @@ import (
 	g "github.com/AllenDang/giu"
 	"github.com/sirupsen/logrus"
 	"github.com/sqweek/dialog"
+	"image"
 	"time"
 )
 
@@ -123,7 +124,10 @@ func guiLoop() {
 func runGiu() {
 	guiConfigCopy = config
 
-	wnd := g.NewMasterWindow("Automover", 1000, 700, 0)
+	wnd := g.NewMasterWindow("Automover - github.com/reaganiwadha", 1000, 700, 0)
+	wnd.SetIcon([]image.Image{
+		scienceTinyIconPng,
+	})
 
 	done := make(chan bool)
 

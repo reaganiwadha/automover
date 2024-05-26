@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"github.com/energye/systray"
 	"github.com/energye/systray/icon"
+	"time"
 )
 
 func runSystray() {
@@ -12,10 +14,20 @@ func runSystray() {
 func onExit() {
 }
 
+func updateSystray() {
+	systray.SetIcon(scienceTinyFlashIcon)
+	go func() {
+		time.Sleep(500 * time.Millisecond)
+		systray.SetIcon(scienceTinyIcon)
+	}()
+
+	systray.SetTooltip(fmt.Sprintf("Last Moved: %s\nMove count: %v", lastMoved, counter))
+}
+
 func onReady() {
-	systray.SetIcon(icon.Data)
-	systray.SetTitle("Awesome App")
-	systray.SetTooltip("Pretty awesome 超级棒\nRight-click for more awesome!")
+	systray.SetIcon(scienceTinyIcon)
+	systray.SetTitle("Automover")
+	systray.SetTooltip(fmt.Sprintf("Last Moved: %s\nMove count: %v", "none", counter))
 	systray.SetOnClick(func(menu systray.IMenu) {
 		mu.Lock()
 		defer mu.Unlock()
