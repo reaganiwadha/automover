@@ -5,18 +5,6 @@ import (
 	"github.com/sqweek/dialog"
 )
 
-func saveConfigFromGui() {
-	tmpCurrentCfg := config
-	config = guiConfigCopy
-	err := saveConfig()
-	if err != nil {
-		statusText = "Error saving config"
-		config = tmpCurrentCfg
-	} else {
-		statusText = "Config saved"
-	}
-}
-
 var (
 	guiConfigCopy AutomoverConfig
 	selectedIndex int
@@ -94,7 +82,17 @@ func guiLoop() {
 		g.Spacing(),
 		g.Spacing(),
 		g.Row(
-			g.Button("Save").OnClick(saveConfigFromGui),
+			g.Button("Save").OnClick(func() {
+				tmpCurrentCfg := config
+				config = guiConfigCopy
+				err := saveConfig()
+				if err != nil {
+					statusText = "Error saving config"
+					config = tmpCurrentCfg
+				} else {
+					statusText = "Config saved"
+				}
+			}),
 		),
 
 		g.Separator(),
